@@ -9,12 +9,14 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository : CalendarRepository;
-    private val selectedDate = MutableLiveData<Date>();
+    private val selectedDate = MutableLiveData<String>();
     private val _eventsForSelectedDate = MutableLiveData<List<Calendar>>();
     val eventsForSelectedDate: LiveData<List<Calendar>> get() = _eventsForSelectedDate;
 
@@ -23,7 +25,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         repository = CalendarRepository(userDao);
     };
     fun setSelectedDate(date: Date?) {
-        selectedDate.value = date;
+        selectedDate.value = String.toString();
         if (date != null) {
             loadEventsForSelectedDate(date);
         };
@@ -36,9 +38,15 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     };
 
     fun loadEventsForSelectedDate(date: Date) {
+        val selectedDateString = formatDateFromTimestamp(date.time)
         viewModelScope.launch(Dispatchers.IO) {
-            val events = repository.getEvents(date);
-            _eventsForSelectedDate.postValue(events.value);
-        };
+            val events = repository.getEvents(selectedDateString)
+            _eventsForSelectedDate.postValue(events.value)
+        }
+    };
+
+    fun formatDateFromTimestamp(timestamp: Long): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(Date(timestamp));
     };
 }

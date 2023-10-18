@@ -55,8 +55,16 @@ class MainActivity : AppCompatActivity() {
             val formattedMonth = if (month < 9) "0${month + 1}" else "${month + 1}";
             val formattedDay = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth";
             selectedDate = "$year-$formattedMonth-$formattedDay";
-            readData();
-        }
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd");
+            try {
+                date = dateFormat.parse(selectedDate);
+                repository
+                viewModel.setSelectedDate(date.toString());
+                readData();
+            } catch (e: Exception) {
+                e.printStackTrace();
+            };
+        };
 
         val calendarDatabase = Room.databaseBuilder(
             applicationContext,
@@ -64,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         ).build();
 
         repository = CalendarRepository(calendarDatabase.calendarDao());
+
+        viewModel = ViewModelProvider(this)[CalendarViewModel::class.java];
 
         dialog = Dialog(this);
         dialogBinding = DialogAddScheduleBinding.inflate(LayoutInflater.from(this));
@@ -116,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             if (date != null) {
                 val calendarData =
-                    Calendar(0, date, dialogBinding.content.text.toString(), importance);
+                    Calendar(0, date.toString(), dialogBinding.content.text.toString(), importance);
                 viewModel.insertEvent(calendarData);
             } else {
                 runOnUiThread {
