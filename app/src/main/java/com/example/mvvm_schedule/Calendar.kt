@@ -9,5 +9,6 @@ data class Calendar (
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     var date: Date,
-    var description: String
+    var description: String,
+    var importance : Int
 )
