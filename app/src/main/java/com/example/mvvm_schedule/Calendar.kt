@@ -8,7 +8,7 @@ import java.util.Date
 data class Calendar (
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    var date: String,
+    var date: Date,
     var description: String,
     var importance : Int
 )

@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 date = dateFormat.parse(selectedDate);
                 repository
-                viewModel.setSelectedDate(date.toString());
+                viewModel.setSelectedDate(date);
                 readData();
             } catch (e: Exception) {
                 e.printStackTrace();
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd");
         selectedDate = dateFormat.format(calendar.time);
         try {
-            date = dateFormat.parse(selectedDate)
+            date = dateFormat.parse(selectedDate);
             readData();
         } catch (e: Exception) {
             e.printStackTrace();
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             if (date != null) {
                 val calendarData =
-                    Calendar(0, date.toString(), dialogBinding.content.text.toString(), importance);
+                    Calendar(0, date, dialogBinding.content.text.toString(), importance);
                 viewModel.insertEvent(calendarData);
             } else {
                 runOnUiThread {
