@@ -3,9 +3,13 @@ package com.example.mvvm_schedule
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.example.mvvm_schedule.databinding.ActivityMainBinding
 import com.example.mvvm_schedule.databinding.DialogAddScheduleBinding
@@ -18,34 +22,41 @@ import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMainBinding;
+    private lateinit var binding: ActivityMainBinding;
 
-    private lateinit var dialog : Dialog;
+    private lateinit var dialog: Dialog;
 
-    private lateinit var dialogBinding :DialogAddScheduleBinding;
+    private lateinit var dialogBinding: DialogAddScheduleBinding;
 
     private var selectedDate = "";
 
     private var importance = 0;
 
-    private lateinit var date : Date;
+    private lateinit var date: Date;
 
     private lateinit var repository: CalendarRepository;
+
+    private lateinit var adapter: CalendarAdapter;
+
+    private lateinit var viewModel: CalendarViewModel;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
 
+        adapter = CalendarAdapter(emptyList());
+
         binding.addScheduleBtn.setOnClickListener {
             showAddDialog();
         };
 
-        binding.calendarView.setOnDateChangeListener {_, year, month, dayOfMonth ->
-        val formattedMonth = if (month < 9) "0${month + 1}" else "${month + 1}";
-        val formattedDay = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth";
-        selectedDate = "$year-$formattedMonth-$formattedDay";
-    }
+        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val formattedMonth = if (month < 9) "0${month + 1}" else "${month + 1}";
+            val formattedDay = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth";
+            selectedDate = "$year-$formattedMonth-$formattedDay";
+            readData();
+        }
 
         val calendarDatabase = Room.databaseBuilder(
             applicationContext,
@@ -62,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         selectedDate = dateFormat.format(calendar.time);
         try {
             date = dateFormat.parse(selectedDate);
+            readData();
         } catch (e: Exception) {
             e.printStackTrace();
         };
@@ -103,8 +115,9 @@ class MainActivity : AppCompatActivity() {
     private fun addDialog() {
         CoroutineScope(Dispatchers.IO).launch {
             if (date != null) {
-                val calendarData = Calendar(0, date, dialogBinding.content.toString(), importance);
-                repository.insert(calendarData);
+                val calendarData =
+                    Calendar(0, date, dialogBinding.content.text.toString(), importance);
+                viewModel.insertEvent(calendarData);
             } else {
                 runOnUiThread {
                     Toast.makeText(this@MainActivity, "유효하지 않은 날짜입니다.", Toast.LENGTH_SHORT).show();
@@ -112,4 +125,20 @@ class MainActivity : AppCompatActivity() {
             };
         };
     };
+
+    private fun readData() {
+        viewModel =ViewModelProvider(this)[CalendarViewModel::class.java];
+        viewModel.eventsForSelectedDate.observe(this) { events ->
+            if (events != null) {
+                adapter.setData(events);
+                binding.emptyText.visibility = View.GONE;
+            } else {
+                binding.emptyText.text = "이벤트 없음ㅇㅇㅇㅇ";
+                binding.emptyText.visibility = View.VISIBLE;
+            };
+        };
+        viewModel.loadEventsForSelectedDate(date);
+        binding.recvSchedule.adapter = adapter;
+        binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+    }
 }

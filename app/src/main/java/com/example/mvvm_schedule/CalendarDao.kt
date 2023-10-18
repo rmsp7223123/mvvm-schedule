@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import java.util.Date
 
 @Dao
 interface CalendarDao {
@@ -11,5 +12,5 @@ interface CalendarDao {
     suspend fun insert(calendar: Calendar);
 
     @Query("select * from calendar where date = :selectDate")
-    fun getEventsForDate(selectDate : Long): LiveData<List<Calendar>>;
+    fun getEventsForDate(selectDate : Date): LiveData<List<Calendar>>;
 }
