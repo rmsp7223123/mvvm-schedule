@@ -4,24 +4,29 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Date
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: CalendarRepository;
+
+    private val repository : CalendarRepository;
     private val selectedDate = MutableLiveData<Date>();
     private val _eventsForSelectedDate = MutableLiveData<List<Calendar>>();
     val eventsForSelectedDate: LiveData<List<Calendar>> get() = _eventsForSelectedDate;
 
     init {
-        val eventDao = CalendarDatabase.getDatabase(application).calendarDao();
-        repository = CalendarRepository(eventDao);
+        val userDao = CalendarDatabase.getDatabase(application).calendarDao();
+        repository = CalendarRepository(userDao);
     };
-
-    fun setSelectedDate(date: Date) {
+    fun setSelectedDate(date: Date?) {
         selectedDate.value = date;
+        if (date != null) {
+            loadEventsForSelectedDate(date);
+        };
     };
 
     fun insertEvent(calendar: Calendar) {

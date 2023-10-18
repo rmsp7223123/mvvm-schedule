@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd");
         selectedDate = dateFormat.format(calendar.time);
         try {
-            date = dateFormat.parse(selectedDate);
+            date = dateFormat.parse(selectedDate)
             readData();
         } catch (e: Exception) {
             e.printStackTrace();
