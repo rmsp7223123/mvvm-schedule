@@ -2,6 +2,7 @@ package com.example.mvvm_schedule
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioButton
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,15 +57,8 @@ class MainActivity : AppCompatActivity() {
             val formattedMonth = if (month < 9) "0${month + 1}" else "${month + 1}";
             val formattedDay = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth";
             selectedDate = "$year-$formattedMonth-$formattedDay";
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd");
-            try {
-                date = dateFormat.parse(selectedDate);
-                repository
-                viewModel.setSelectedDate(date);
-                readData();
-            } catch (e: Exception) {
-                e.printStackTrace();
-            };
+            viewModel.setSelectedDate(selectedDate);
+            readData();
         };
 
         val calendarDatabase = Room.databaseBuilder(
@@ -147,8 +142,15 @@ class MainActivity : AppCompatActivity() {
                 binding.emptyText.visibility = View.VISIBLE;
             };
         };
-        viewModel.loadEventsForSelectedDate(date);
-        binding.recvSchedule.adapter = adapter;
-        binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            val selectedDate = dateFormat.format(date);
+            viewModel.setSelectedDate(selectedDate);
+            binding.recvSchedule.adapter = adapter;
+            binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+        } catch (e: Exception) {
+            e.printStackTrace();
+        }
     }
 }

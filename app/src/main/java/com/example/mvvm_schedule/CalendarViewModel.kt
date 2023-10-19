@@ -23,10 +23,14 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         repository = CalendarRepository(eventDao);
     };
 
-    fun setSelectedDate(date: Date?) {
-        selectedDate.value = date ?: Date();
-        if (date != null) {
+    fun setSelectedDate(dateString: String) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            val date = dateFormat.parse(dateString);
+            selectedDate.value = date;
             loadEventsForSelectedDate(date);
+        } catch (e: Exception) {
+            e.printStackTrace();
         }
     }
     fun insertEvent(calendar: Calendar) {
