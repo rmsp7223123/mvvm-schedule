@@ -4,10 +4,10 @@ import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater);
         setContentView(binding.root);
 
-        adapter = CalendarAdapter(emptyList());
-
         binding.addScheduleBtn.setOnClickListener {
             showAddDialog();
         };
@@ -74,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         dialogBinding = DialogAddScheduleBinding.inflate(LayoutInflater.from(this));
 
         val calendar = Calendar.getInstance();
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd");
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         selectedDate = dateFormat.format(calendar.time);
         try {
             date = dateFormat.parse(selectedDate);
@@ -90,9 +88,9 @@ class MainActivity : AppCompatActivity() {
         dialogBinding.dateText.text = selectedDate;
         dialogBinding.saveScheduleBtn.setOnClickListener { _ ->
             if (dialogBinding.content.text.toString().isEmpty()) {
-                Toast.makeText(this, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show();
             } else if (dialogBinding.radioGroup.checkedRadioButtonId === -1) {
-                Toast.makeText(this, "중요도를 체크해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "중요도를 체크해주세요.", Toast.LENGTH_SHORT).show();
             } else {
                 for (i in 0 until dialogBinding.radioGroup.childCount) {
                     val btn = dialogBinding.radioGroup.getChildAt(i) as RadioButton
@@ -132,25 +130,22 @@ class MainActivity : AppCompatActivity() {
     };
 
     private fun readData() {
-        viewModel =ViewModelProvider(this)[CalendarViewModel::class.java];
-        viewModel.eventsForSelectedDate.observe(this) { events ->
-            if (events != null) {
-                adapter.setData(events);
-                binding.emptyText.visibility = View.GONE;
-            } else {
-                binding.emptyText.text = "이벤트 없음ㅇㅇㅇㅇ";
-                binding.emptyText.visibility = View.VISIBLE;
-            };
-        };
-
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
             val selectedDate = dateFormat.format(date);
             viewModel.setSelectedDate(selectedDate);
-            binding.recvSchedule.adapter = adapter;
-            binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+            viewModel.eventsForSelectedDate.observe(this) { events ->
+                Log.d("EventSize", "Events size: ${events?.size ?: 0}");
+                if (events != null && events.isNotEmpty()) {
+                    adapter = CalendarAdapter(events);
+                    binding.recvSchedule.adapter = adapter;
+                    binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+                } else {
+                    binding.emptyText.text = "ddddd";
+                }
+            };
         } catch (e: Exception) {
             e.printStackTrace();
-        }
-    }
+        };
+    };
 }
