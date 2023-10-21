@@ -29,7 +29,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         try {
             val date = dateFormat.parse(dateString);
             selectedDate.value = date;
-            loadEventsForSelectedDate(date);
+            loadEventsForSelectedDate(dateString);
         } catch (e: Exception) {
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         };
     };
 
-    fun loadEventsForSelectedDate(date: Date) {
+    fun loadEventsForSelectedDate(date: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val events = repository.getEvents(date);
             withContext(Dispatchers.Main) {

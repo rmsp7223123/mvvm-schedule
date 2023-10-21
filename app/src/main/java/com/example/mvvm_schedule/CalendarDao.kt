@@ -11,6 +11,6 @@ interface CalendarDao {
     @Insert
     suspend fun insert(calendar: Calendar);
 
-    @Query("select * from calendar where date = :selectDate")
-    fun getEventsForDate(selectDate : Date): LiveData<List<Calendar>>;
+    @Query("SELECT * FROM calendar WHERE strftime('%Y-%m-%d', date) = :selectDate")
+    fun getEventsForDate(selectDate: String): LiveData<List<Calendar>>
 }
