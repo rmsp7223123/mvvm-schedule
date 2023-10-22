@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             if (date != null) {
                 val calendarData =
-                    Calendar(0, date, dialogBinding.content.text.toString(), importance);
+                    Calendar(0, date.toString(), dialogBinding.content.text.toString(), importance);
                 viewModel.insertEvent(calendarData);
             } else {
                 runOnUiThread {
