@@ -118,8 +118,9 @@ class MainActivity : AppCompatActivity() {
     private fun addDialog() {
         CoroutineScope(Dispatchers.IO).launch {
             if (date != null) {
-                val calendarData =
-                    Calendar(0, date.toString(), dialogBinding.content.text.toString(), importance);
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                val formattedDate = dateFormat.format(selectedDate);
+                val calendarData = Calendar(0, formattedDate, dialogBinding.content.text.toString(), importance);
                 viewModel.insertEvent(calendarData);
             } else {
                 runOnUiThread {
@@ -132,17 +133,17 @@ class MainActivity : AppCompatActivity() {
     private fun readData() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
-            val selectedDate = dateFormat.format(date);
-            viewModel.setSelectedDate(selectedDate);
+            val formattedSelectedDate = dateFormat.format(date);
+            viewModel.setSelectedDate(formattedSelectedDate);
             viewModel.eventsForSelectedDate.observe(this) { events ->
-                Log.d("EventSize", "Events size: ${events?.size ?: 0}");
+                Log.d("EventSize", "Events size: ${events?.size ?: 0}")
                 if (events != null && events.isNotEmpty()) {
                     adapter = CalendarAdapter(events);
                     binding.recvSchedule.adapter = adapter;
                     binding.recvSchedule.layoutManager = LinearLayoutManager(this);
                 } else {
-                    binding.emptyText.text = "ddddd";
-                }
+                    binding.emptyText.text = "asd";
+                };
             };
         } catch (e: Exception) {
             e.printStackTrace();
