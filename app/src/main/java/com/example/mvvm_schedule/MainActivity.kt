@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -131,12 +132,18 @@ class MainActivity : AppCompatActivity() {
     private fun readData() {
         try {
             //viewModel.setSelectedDate(selectedDate);
-            viewModel.all();
+            //viewModel.all();
             viewModel.readAlldata.observe(this) {events ->
-                Log.d("EventSize", "Events size: ${events?.size ?: 0}");
+                if (events != null && events.isNotEmpty()) {
+                    adapter = CalendarAdapter(events);
+                    binding.recvSchedule.adapter = adapter;
+                    binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+                    binding.emptyText.visibility = View.GONE;
+                } else {
+                    binding.emptyText.visibility = View.VISIBLE;
+                };
             };
 //            viewModel.eventsForSelectedDate.observe(this) { events ->
-//                Log.d("EventSize", "Events size: ${events?.size ?: 0}")
 //                if (events != null && events.isNotEmpty()) {
 //                    adapter = CalendarAdapter(events);
 //                    binding.recvSchedule.adapter = adapter;

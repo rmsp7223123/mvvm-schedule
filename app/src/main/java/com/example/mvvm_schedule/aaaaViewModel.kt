@@ -17,22 +17,19 @@ class aaaaViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: aaaaRepository;
     private val _eventsForSelectedDate = MutableLiveData<List<aaaa>>();
+    private val _allEvents = MutableLiveData<List<aaaa>>();
 
-    val readAlldata : LiveData<List<aaaa>>;
+    val readAlldata : LiveData<List<aaaa>> get() = _allEvents;
     val eventsForSelectedDate: LiveData<List<aaaa>> get() = _eventsForSelectedDate;
 
     init {
         val eventDao = aaaaDatabase.getDatabase(application).aaaaDao();
         repository = aaaaRepository(eventDao);
-        readAlldata = repository.all();
+        loadAllEvents();
     };
 
     fun setSelectedDate(dateString: String) {
-        try {
-            loadEventsForSelectedDate(dateString);
-        } catch (e: Exception) {
-            e.printStackTrace();
-        }
+        _eventsForSelectedDate.value = _allEvents.value?.filter { it.date == dateString } ?: emptyList();
     }
 
     fun insertEvent(aaaa: aaaa) {
@@ -50,13 +47,12 @@ class aaaaViewModel(application: Application) : AndroidViewModel(application) {
         };
     };
 
-    fun all() {
+    private fun loadAllEvents() {
         viewModelScope.launch(Dispatchers.IO) {
-            val events = repository.all();
-            Log.d("ViewModel", "Fetched ${events.value?.size ?: 0} events from repository");
+            val allEvents = repository.all();
             withContext(Dispatchers.Main) {
-                _eventsForSelectedDate.value = events.value ?: emptyList();
+                _allEvents.value = allEvents.value ?: emptyList();
             };
-        }
-    }
+        };
+    };
 }
