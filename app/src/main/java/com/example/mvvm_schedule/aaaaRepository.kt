@@ -1,5 +1,6 @@
 package com.example.mvvm_schedule
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import java.util.Date
 
@@ -10,7 +11,9 @@ class aaaaRepository(private val aaaaDao: aaaaDao) {
     }
 
     fun all() : LiveData<List<aaaa>> {
-        return aaaaDao.all();
+        val events = aaaaDao.all();
+        Log.d("Repository", "Fetched ${events.value?.size ?: 0} events from database");
+        return events;
     }
 
     suspend fun insert(aaaa: aaaa) {

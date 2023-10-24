@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
 
-@Entity
+@Entity(tableName = "aaaa")
 data class aaaa (
     @PrimaryKey(autoGenerate = true)
     var id: Int,

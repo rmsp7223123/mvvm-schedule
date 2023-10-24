@@ -130,17 +130,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun readData() {
         try {
-            viewModel.loadEventsForSelectedDate(selectedDate);
-            viewModel.eventsForSelectedDate.observe(this) { events ->
-                Log.d("EventSize", "Events size: ${events?.size ?: 0}")
-                if (events != null && events.isNotEmpty()) {
-                    adapter = CalendarAdapter(events);
-                    binding.recvSchedule.adapter = adapter;
-                    binding.recvSchedule.layoutManager = LinearLayoutManager(this);
-                } else {
-                    binding.emptyText.text = "asd";
-                };
+            //viewModel.setSelectedDate(selectedDate);
+            viewModel.all();
+            viewModel.readAlldata.observe(this) {events ->
+                Log.d("EventSize", "Events size: ${events?.size ?: 0}");
             };
+//            viewModel.eventsForSelectedDate.observe(this) { events ->
+//                Log.d("EventSize", "Events size: ${events?.size ?: 0}")
+//                if (events != null && events.isNotEmpty()) {
+//                    adapter = CalendarAdapter(events);
+//                    binding.recvSchedule.adapter = adapter;
+//                    binding.recvSchedule.layoutManager = LinearLayoutManager(this);
+//                } else {
+//                    binding.emptyText.text = "asd";
+//                };
+//            };
         } catch (e: Exception) {
             e.printStackTrace();
         };

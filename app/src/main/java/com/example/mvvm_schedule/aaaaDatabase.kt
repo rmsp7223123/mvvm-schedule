@@ -13,6 +13,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 abstract class aaaaDatabase : RoomDatabase() {
     abstract fun aaaaDao(): aaaaDao;
 
+    init {
+        Log.d("RoomQuery", "SELECT * FROM aaaa");
+    };
+
     companion object {
         private var INSTANCE: aaaaDatabase? = null;
 
