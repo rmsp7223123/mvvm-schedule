@@ -13,4 +13,7 @@ interface aaaaDao {
 
     @Query("SELECT * FROM aaaa WHERE date = :selectDate")
     fun getEventsForDate(selectDate: String): LiveData<List<aaaa>>
+
+    @Query("SELECT * FROM aaaa")
+    fun all(): LiveData<List<aaaa>>;
 }

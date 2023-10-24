@@ -122,17 +122,15 @@ class MainActivity : AppCompatActivity() {
                 viewModel.insertEvent(calendarData);
             } else {
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity2, "유효하지 않은 날짜입니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this@MainActivity, "유효하지 않은 날짜입니다.", Toast.LENGTH_SHORT).show();
                 };
             };
         };
     };
 
     private fun readData() {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
-            val formattedSelectedDate = dateFormat.format(date);
-            viewModel.setSelectedDate(formattedSelectedDate);
+            viewModel.loadEventsForSelectedDate(selectedDate);
             viewModel.eventsForSelectedDate.observe(this) { events ->
                 Log.d("EventSize", "Events size: ${events?.size ?: 0}")
                 if (events != null && events.isNotEmpty()) {

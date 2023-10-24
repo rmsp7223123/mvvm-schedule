@@ -9,6 +9,10 @@ class aaaaRepository(private val aaaaDao: aaaaDao) {
         return aaaaDao.getEventsForDate(selectDate);
     }
 
+    fun all() : LiveData<List<aaaa>> {
+        return aaaaDao.all();
+    }
+
     suspend fun insert(aaaa: aaaa) {
         return aaaaDao.insert(aaaa);
     }
