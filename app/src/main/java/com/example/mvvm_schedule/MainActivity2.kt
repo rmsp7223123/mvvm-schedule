@@ -22,7 +22,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class MainActivity : AppCompatActivity() {
+class MainActivity2 : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding;
 

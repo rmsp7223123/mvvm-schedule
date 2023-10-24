@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mvvm_schedule.databinding.ItemCalendarListBinding
 
-class CalendarAdapter(private var calendarList: List<Calendar>) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
+class CalendarAdapter(private var calendarList: List<aaaa>) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
     inner class ViewHolder(var binding : ItemCalendarListBinding) :RecyclerView.ViewHolder(binding.root)
 
