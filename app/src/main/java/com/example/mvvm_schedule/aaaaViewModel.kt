@@ -19,12 +19,13 @@ class aaaaViewModel(application: Application) : AndroidViewModel(application) {
     private val _eventsForSelectedDate = MutableLiveData<List<aaaa>>();
     private val _allEvents = MutableLiveData<List<aaaa>>();
 
-    val readAlldata : LiveData<List<aaaa>> get() = _allEvents;
+    val readAlldata : LiveData<List<aaaa>>;
     val eventsForSelectedDate: LiveData<List<aaaa>> get() = _eventsForSelectedDate;
 
     init {
         val eventDao = aaaaDatabase.getDatabase(application).aaaaDao();
         repository = aaaaRepository(eventDao);
+        readAlldata = repository.all();
         loadAllEvents();
     };
 

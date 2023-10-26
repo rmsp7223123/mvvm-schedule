@@ -143,15 +143,6 @@ class MainActivity : AppCompatActivity() {
                     binding.emptyText.visibility = View.VISIBLE;
                 };
             };
-//            viewModel.eventsForSelectedDate.observe(this) { events ->
-//                if (events != null && events.isNotEmpty()) {
-//                    adapter = CalendarAdapter(events);
-//                    binding.recvSchedule.adapter = adapter;
-//                    binding.recvSchedule.layoutManager = LinearLayoutManager(this);
-//                } else {
-//                    binding.emptyText.text = "asd";
-//                };
-//            };
         } catch (e: Exception) {
             e.printStackTrace();
         };
