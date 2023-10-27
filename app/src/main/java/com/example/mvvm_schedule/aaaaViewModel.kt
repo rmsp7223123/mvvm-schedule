@@ -26,7 +26,7 @@ class aaaaViewModel(application: Application) : AndroidViewModel(application) {
         val eventDao = aaaaDatabase.getDatabase(application).aaaaDao();
         repository = aaaaRepository(eventDao);
         readAlldata = repository.all();
-        loadAllEvents();
+        // loadAllEvents();
     };
 
     fun setSelectedDate(dateString: String) {
